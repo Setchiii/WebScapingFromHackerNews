@@ -64,7 +64,7 @@ def create_email_content(template_file, data):
     content = soup.find_all('p')
     for i in range(5):
         content[i].string = data[i][0] + ": " + \
-            data[i][1] + "(" + str(data[i][2]) + " points)"
+            data[i][1] + " (" + str(data[i][2]) + " points)"
     print("Exemple: " + content[0].string)
     print("...email content généré...")
     return str(soup)
