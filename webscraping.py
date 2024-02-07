@@ -10,7 +10,7 @@ def get_soup_from_url(url):
     return BeautifulSoup(response.text, 'html.parser')
 
 
-def extract_links(soup: BeautifulSoup, min_score=100):
+def extract_links(soup: BeautifulSoup, min_score=0):
     links_list = []
 
     # Find all rows with class 'subtext' (where the score is located)
@@ -49,3 +49,4 @@ if __name__ == '__main__':
     links = extract_links(soup, 0)
     for link in links:
         print(link)
+
