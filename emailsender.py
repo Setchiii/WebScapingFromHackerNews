@@ -65,5 +65,10 @@ def create_email_content(template_file, data):
     for i in range(5):
         content[i].string = data[i][0] + ": " + \
             data[i][1] + "( " + str(data[i][2]) + " points)"
+    print("Exemple: " + content[0].string)
     print("...email content généré...")
     return str(soup)
+
+
+if __name__ == "__main__":
+    personaldata_dict = read_personaldata_file('personaldata.txt')
