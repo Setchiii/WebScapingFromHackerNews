@@ -38,6 +38,7 @@ def extract_links(soup: BeautifulSoup, min_score=100):
                         link_info.append(score)
                         links_list.append(link_info)
 # Trier la liste par ordre de score décroissant avant de retourner le résultat
+    print(f"...link list générée: {len(links_list)} sujets...")
     links_list.sort(key=lambda x: x[2], reverse=True)
     return links_list
 

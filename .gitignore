@@ -1,0 +1,4 @@
+.env
+personaldata.txt
+__pycache__/emailsender.cpython-310.pyc
+__pycache__/webscraping.cpython-310.pyc
