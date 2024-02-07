@@ -39,7 +39,7 @@ def send_email(personaldata_dict, subject, body, attachment=None):
             msg.attach(part)
 
     # Envoi de l'email
-    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     server.starttls()
     server.login(personaldata_dict['EMAIL_SOURCE'],
                  personaldata_dict['EMAIL_PASSWORD'])
