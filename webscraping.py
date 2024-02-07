@@ -24,9 +24,9 @@ def extract_links(soup: BeautifulSoup, min_score=100):
             # Get the number part of the score
             score = int(score.text.split()[0])
 
-        # If score is 100 or more, find the corresponding title and link
+        # If score is not found, or if it is less than the minimum score, skip
         if score and score >= min_score:
-            # Find the parent row
+            # Find the parent row. The title is in the second 'td' tag with class 'title'
             row = subtext.find_parent('tr').find_previous_sibling('tr')
             if row:
                 title_data = row.find_all('td', class_='title')[1]
