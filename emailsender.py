@@ -76,7 +76,7 @@ def create_email_content(template_file, data):
         template = f.read()
     soup = BeautifulSoup(template, 'html.parser')
     title = soup.find('h1')
-    title.string = "News de Hacker News du " + str(date.today())
+    title.string = "Hacker News top sujets du " + str(date.today())
     content = soup.find_all('p')
     for i in range(5):
         content[i].string = data[i][0] + ": " + \
