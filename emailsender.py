@@ -11,22 +11,34 @@ from bs4 import BeautifulSoup
 
 def read_personaldata_file(file_path):
     env_dict = {}
-    with open(file_path, 'r') as f:
-        for line in f:
-            key, value = line.strip().split('=')
-            env_dict[key] = value
-    print(f"...{len(env_dict)} personal data lues...")
-    return env_dict
+    try:
+        with open(file_path, 'r') as f:
+            for line in f:
+                key, value = line.strip().split('=')
+                env_dict[key] = value
+        # vérifie que env_dict contient au moins les clés suivantes: EMAIL_SOURCE, EMAIL_PASSWORD, EMAIL_DEST
+        if not all(key in env_dict for key in ('EMAIL_SOURCE', 'EMAIL_PASSWORD', 'EMAIL_DEST')):
+            print("Le fichier personaldata.txt doit contenir les clés suivantes: EMAIL_SOURCE, EMAIL_PASSWORD, EMAIL_DEST")
+            exit()
+        print(f"...{len(env_dict)} personal data lues...")
+        return env_dict
+    except FileNotFoundError:
+        print(f"Le fichier {file_path} est introuvable")
+        exit()
 
 
 def send_email(personaldata_dict, subject, body, attachment=None):
     # Création de l'objet MIMEMultipart
-    msg = MIMEMultipart()
-    msg['From'] = personaldata_dict["EMAIL_SOURCE"]
-    msg['To'] = personaldata_dict['EMAIL_DEST']
-    msg['Date'] = formatdate(localtime=True)
-    msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'html'))
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = personaldata_dict["EMAIL_SOURCE"]
+        msg['To'] = personaldata_dict['EMAIL_DEST']
+        msg['Date'] = formatdate(localtime=True)
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'html'))
+    except KeyError:
+        print("Le dictionnaire personaldata_dict doit contenir les clés suivantes: EMAIL_SOURCE, EMAIL_PASSWORD, EMAIL_DEST")
+        exit()
 
     # Ajout de la pièce jointe
     if attachment:
@@ -39,14 +51,18 @@ def send_email(personaldata_dict, subject, body, attachment=None):
             msg.attach(part)
 
     # Envoi de l'email
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-    server.login(personaldata_dict['EMAIL_SOURCE'],
-                 personaldata_dict['EMAIL_PASSWORD'])
-    server.sendmail(personaldata_dict['EMAIL_SOURCE'],
-                    personaldata_dict['EMAIL_DEST'], msg.as_string())
-    server.quit()
-    print("...email envoyé...")
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(personaldata_dict['EMAIL_SOURCE'],
+                    personaldata_dict['EMAIL_PASSWORD'])
+        server.sendmail(personaldata_dict['EMAIL_SOURCE'],
+                        personaldata_dict['EMAIL_DEST'], msg.as_string())
+        server.quit()
+        print("...email envoyé...")
+    except smtplib.SMTPAuthenticationError:
+        print("Erreur d'authentification. Vérifiez que le mot de passe est correct.")
+        exit()
 
 # Fonction qui prend en paramètre le nom du fichier template html et les données à insérer dans le template. Elle retourne le contenu du template avec les données insérées.
 # les données à insérer sont passées en paramètre sous forme d'un tableau dont les éléments sont des tableaux de 3 éléments : le nom, le lien et le score.

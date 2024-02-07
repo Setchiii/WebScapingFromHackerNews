@@ -5,7 +5,11 @@ from bs4 import BeautifulSoup
 
 
 def get_soup_from_url(url):
-    response = requests.get(url)
+    response = requests.get(url, timeout=5000)
+    if not response.ok:
+        print(f"Erreur {response.status_code} lors de la récupération de la page {url}")
+        # fin du programme
+        exit()
     # On retourne un objet BeautifulSoup
     return BeautifulSoup(response.text, 'html.parser')
 
@@ -39,13 +43,14 @@ def extract_links(soup: BeautifulSoup, min_score=0):
                         links_list.append(link_info)
 # Trier la liste par ordre de score décroissant avant de retourner le résultat
     print(f"...link list générée: {len(links_list)} sujets...")
-    links_list.sort(key=lambda x: x[2], reverse=True)
+    if links_list:
+        links_list.sort(key=lambda x: x[2], reverse=True)
     return links_list
 
 
 if __name__ == '__main__':
-    url = 'https://news.ycombinator.com/news'
-    soup = get_soup_from_url(url)
+    URL = 'https://news.ycombinator.com/news'
+    soup = get_soup_from_url(URL)
     links = extract_links(soup, 0)
     for link in links:
         print(link)
